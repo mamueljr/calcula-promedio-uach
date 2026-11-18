@@ -2,129 +2,889 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Calculadora de Calificación Final</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Calcula tu calificación final ponderada en la UACH (Parcial 1: 30%, Parcial 2: 30%, Parcial 3: 40%) en escala 0-10 o 0-100."
+    />
+    <meta
+      name="theme-color"
+      content="#f6f5f1"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#111110"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="canonical" href="https://app.esiscom.com/uach/promedio" />
+    <meta
+      property="og:title"
+      content="Calculadora de Promedio Final | UACH · ESISCOM"
+    />
+    <meta
+      property="og:description"
+      content="Calcula tu calificación final ponderada UACH (30% / 30% / 40%) en escala 0-10 o 0-100."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://app.esiscom.com/uach/promedio" />
+    <title>Calculadora de Promedio Final | UACH · ESISCOM</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f0f8ff;
-        color: #333;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
+      :root {
+        color-scheme: light;
+        --bg: #f6f5f1;
+        --surface: #ffffff;
+        --surface-2: #efede7;
+        --text: #141413;
+        --text-muted: #5c5a52;
+        --text-soft: #8c897e;
+        --border: #dcd9d0;
+        --border-strong: #141413;
+        --accent: #141413;
+        --accent-contrast: #f6f5f1;
+        --accent-hover: #2c2c29;
+        --good: #166534;
+        --good-bg: #f0fdf4;
+        --good-border: #86efac;
+        --bad: #991b1b;
+        --bad-bg: #fef2f2;
+        --bad-border: #fca5a5;
+        --radius-card: 12px;
+        --radius-ctrl: 8px;
+        --space-card: clamp(20px, 5vw, 32px);
       }
 
-      .container {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        padding: 30px;
-        width: 90%;
-        max-width: 400px;
-        text-align: center;
-        margin: auto;
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+          --bg: #111110;
+          --surface: #191917;
+          --surface-2: #22221f;
+          --text: #f2f0ea;
+          --text-muted: #a6a399;
+          --text-soft: #757268;
+          --border: #2e2d28;
+          --border-strong: #f2f0ea;
+          --accent: #f2f0ea;
+          --accent-contrast: #111110;
+          --accent-hover: #dedbd2;
+          --good: #4ade80;
+          --good-bg: rgba(34, 197, 94, 0.1);
+          --good-border: rgba(74, 222, 128, 0.35);
+          --bad: #f87171;
+          --bad-bg: rgba(239, 68, 68, 0.1);
+          --bad-border: rgba(248, 113, 113, 0.35);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      body {
+        font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .contenido-principal {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: max(20px, env(safe-area-inset-top))
+          max(16px, env(safe-area-inset-right))
+          24px
+          max(16px, env(safe-area-inset-left));
+      }
+
+      .marco {
+        width: 100%;
+        max-width: 480px;
+      }
+
+      .barra-superior {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding: 0 2px;
+      }
+
+      .marca {
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .nav-uach {
+        display: inline-flex;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-ctrl);
+        padding: 3px;
+        gap: 2px;
+      }
+
+      .nav-uach a {
+        min-height: 36px;
+        padding: 6px 11px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-decoration: none;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        transition: color 0.15s ease, background-color 0.15s ease;
+      }
+
+      .nav-uach a:hover {
+        color: var(--text);
+      }
+
+      .nav-uach a[aria-current="page"] {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .calculadora-contenedor {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-card);
+        padding: var(--space-card);
+      }
+
+      .encabezado {
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
       }
 
       h1 {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
+        font-size: clamp(1.5rem, 5.5vw, 1.85rem);
+        font-weight: 800;
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        color: var(--text);
       }
 
-      label {
-        display: block;
-        margin: 10px 0 5px;
-        font-weight: bold;
+      .subtitulo {
+        margin-top: 8px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        color: var(--text-muted);
       }
 
-      input[type="number"] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-        font-size: 1rem;
+      .controles-escala {
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
-      button {
-        background-color: #89cff0;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 10px;
-        font-size: 1rem;
+      .regla-uach {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .regla-uach strong {
+        color: var(--text);
+        font-weight: 800;
+      }
+
+      .selector-escala {
+        display: inline-flex;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-ctrl);
+        padding: 3px;
+        gap: 2px;
+      }
+
+      .selector-escala button {
+        min-height: 34px;
+        padding: 5px 10px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: color 0.15s ease, background-color 0.15s ease;
       }
 
-      button:hover {
-        background-color: #67b7e1;
+      .selector-escala button:hover {
+        color: var(--text);
       }
 
-      #resultado {
+      .selector-escala button[aria-pressed="true"] {
+        background: var(--surface);
+        color: var(--text);
+        border-color: var(--border);
+      }
+
+      .campos {
+        margin-top: 22px;
+        display: grid;
+        gap: 15px;
+      }
+
+      .campo-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 7px;
+      }
+
+      .campo-top label {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .peso {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+
+      .campo-entrada {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .campo-entrada input {
+        width: 100%;
+        min-height: 50px;
+        padding: 12px 54px 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-ctrl);
+        background: var(--bg);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+        -moz-appearance: textfield;
+      }
+
+      .campo-entrada input::-webkit-outer-spin-button,
+      .campo-entrada input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      .campo-entrada input::placeholder {
+        color: var(--text-soft);
+        font-weight: 500;
+      }
+
+      .campo-entrada input:focus {
+        outline: none;
+        border-color: var(--border-strong);
+        background: var(--surface);
+      }
+
+      .campo.invalido .campo-entrada input {
+        border-color: var(--bad);
+      }
+
+      .sufijo {
+        position: absolute;
+        right: 12px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-soft);
+        pointer-events: none;
+      }
+
+      .error-campo {
+        margin-top: 6px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--bad);
+      }
+
+      .boton-calcular {
+        margin-top: 22px;
+        width: 100%;
+        min-height: 50px;
+        padding: 14px 20px;
+        border: 1px solid var(--accent);
+        border-radius: var(--radius-ctrl);
+        background: var(--accent);
+        color: var(--accent-contrast);
+        font-family: inherit;
+        font-size: 0.96rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.15s ease, transform 0.1s ease;
+      }
+
+      .boton-calcular:hover {
+        background: var(--accent-hover);
+      }
+
+      .boton-calcular:active {
+        transform: translateY(1px);
+      }
+
+      .boton-calcular:focus-visible {
+        outline: 2px solid var(--border-strong);
+        outline-offset: 2px;
+      }
+
+      .resultado {
         margin-top: 20px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #007700;
+        padding: 18px;
+        border-radius: var(--radius-ctrl);
+        border: 1px solid var(--border);
+        border-left-width: 4px;
+        background: var(--surface-2);
+      }
+
+      .resultado-bien {
+        background: var(--good-bg);
+        border-color: var(--good-border);
+        border-left-color: var(--good);
+      }
+
+      .resultado-mal {
+        background: var(--bad-bg);
+        border-color: var(--bad-border);
+        border-left-color: var(--bad);
+      }
+
+      .resultado-cabecera {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .resultado-icono {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        flex: none;
+      }
+
+      .resultado-icono svg {
+        width: 100%;
+        height: 100%;
+        display: none;
+      }
+
+      .resultado-bien .icono-bien {
+        display: block;
+        color: var(--good);
+      }
+
+      .resultado-mal .icono-mal {
+        display: block;
+        color: var(--bad);
+      }
+
+      .resultado-etiqueta {
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .resultado-bien .resultado-etiqueta {
+        color: var(--good);
+      }
+
+      .resultado-mal .resultado-etiqueta {
+        color: var(--bad);
+      }
+
+      .resultado-num {
+        margin-top: 8px;
+        font-size: clamp(2.1rem, 8vw, 2.65rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        font-variant-numeric: tabular-nums;
+        color: var(--text);
+      }
+
+      .resultado-msg {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--text-muted);
+      }
+
+      .desglose {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          monospace;
+        font-size: 0.76rem;
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .desglose strong {
+        display: block;
+        margin-top: 2px;
+        color: var(--text);
+        font-size: 0.86rem;
+      }
+
+      .resultado-enlace {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+        font-size: 0.82rem;
+        color: var(--text-muted);
+      }
+
+      .resultado-enlace a {
+        color: var(--text);
+        font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 3px;
       }
 
       footer {
+        padding: 16px 20px max(18px, env(safe-area-inset-bottom));
         text-align: center;
-        padding: 15px;
-        background-color: #d3d3d3;
-        font-size: 0.9rem;
+        font-size: 0.78rem;
+        color: var(--text-soft);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px 14px;
       }
 
       footer a {
-        color: #333;
+        color: var(--text-muted);
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 700;
       }
 
       footer a:hover {
+        color: var(--text);
         text-decoration: underline;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .boton-calcular,
+        .campo-entrada input,
+        .selector-escala button {
+          transition: none;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Calculadora de Calificación Final UACH</h1>
-      <h3>Hecho por M.I.C Emmanuel Rojas</h3>
-      <label for="parcial1">Parcial 1 (30%)</label>
-      <input type="number" id="parcial1" min="0" max="100" step="0.01" />
+    <main class="contenido-principal">
+      <div class="marco">
+        <div class="barra-superior">
+          <span class="marca">ESISCOM · UACH</span>
+          <nav class="nav-uach" aria-label="Calculadoras UACH">
+            <a href="/uach/que-necesito">Nota necesaria</a>
+            <a href="/uach/promedio" aria-current="page">Promedio final</a>
+          </nav>
+        </div>
 
-      <label for="parcial2">Parcial 2 (30%)</label>
-      <input type="number" id="parcial2" min="0" max="100" step="0.01" />
+        <section class="calculadora-contenedor" aria-labelledby="titulo-app">
+          <header class="encabezado">
+            <h1 id="titulo-app">Promedio final UACH</h1>
+            <p class="subtitulo">
+              Calcula tu calificación final ponderada con tus tres parciales.
+            </p>
+            <div class="controles-escala">
+              <div class="regla-uach">
+                <span>P1: <strong>30%</strong></span>
+                <span>P2: <strong>30%</strong></span>
+                <span>P3: <strong>40%</strong></span>
+              </div>
+              <div
+                class="selector-escala"
+                role="group"
+                aria-label="Escala de calificación"
+              >
+                <button type="button" id="btnEscala10" aria-pressed="true">
+                  0–10
+                </button>
+                <button type="button" id="btnEscala100" aria-pressed="false">
+                  0–100
+                </button>
+              </div>
+            </div>
+          </header>
 
-      <label for="parcial3">Parcial 3 (40%)</label>
-      <input type="number" id="parcial3" min="0" max="100" step="0.01" />
+          <div class="campos">
+            <div class="campo">
+              <div class="campo-top">
+                <label for="parcial1">Parcial 1</label>
+                <span class="peso">30%</span>
+              </div>
+              <div class="campo-entrada">
+                <input
+                  type="number"
+                  id="parcial1"
+                  placeholder="0.0"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  inputmode="decimal"
+                  enterkeyhint="next"
+                  autocomplete="off"
+                  aria-describedby="error-parcial1"
+                />
+                <span class="sufijo" data-sufijo>/10</span>
+              </div>
+              <p class="error-campo" id="error-parcial1" role="alert" hidden></p>
+            </div>
 
-      <button onclick="calcular()">Calcular</button>
+            <div class="campo">
+              <div class="campo-top">
+                <label for="parcial2">Parcial 2</label>
+                <span class="peso">30%</span>
+              </div>
+              <div class="campo-entrada">
+                <input
+                  type="number"
+                  id="parcial2"
+                  placeholder="0.0"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  inputmode="decimal"
+                  enterkeyhint="next"
+                  autocomplete="off"
+                  aria-describedby="error-parcial2"
+                />
+                <span class="sufijo" data-sufijo>/10</span>
+              </div>
+              <p class="error-campo" id="error-parcial2" role="alert" hidden></p>
+            </div>
 
-      <div id="resultado"></div>
-    </div>
+            <div class="campo">
+              <div class="campo-top">
+                <label for="parcial3">Parcial 3</label>
+                <span class="peso">40%</span>
+              </div>
+              <div class="campo-entrada">
+                <input
+                  type="number"
+                  id="parcial3"
+                  placeholder="0.0"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  inputmode="decimal"
+                  enterkeyhint="done"
+                  autocomplete="off"
+                  aria-describedby="error-parcial3"
+                />
+                <span class="sufijo" data-sufijo>/10</span>
+              </div>
+              <p class="error-campo" id="error-parcial3" role="alert" hidden></p>
+            </div>
+          </div>
+
+          <button class="boton-calcular" id="botonCalcular" type="button">
+            Calcular calificación final
+          </button>
+
+          <section
+            id="area-resultado"
+            class="resultado"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            <div class="resultado-cabecera">
+              <span class="resultado-icono" aria-hidden="true">
+                <svg
+                  class="icono-bien"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <svg
+                  class="icono-mal"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </span>
+              <p class="resultado-etiqueta" id="resultadoEtiqueta"></p>
+            </div>
+            <p class="resultado-num" id="textoResultado"></p>
+            <p class="resultado-msg" id="resultadoMensaje"></p>
+            <div class="desglose" id="desglosePonderado"></div>
+            <p class="resultado-enlace">
+              ¿Aún no presentas el Parcial 3?
+              <a href="/uach/que-necesito">Calcula cuánto necesitas &rarr;</a>
+            </p>
+          </section>
+        </section>
+      </div>
+    </main>
 
     <footer>
-      <p>
-        <a href="https://mamueljr.github.io/esiscom/" target="_blank"
+      <span>Por M.I.C. Emmanuel Rojas</span>
+      <span>
+        &copy; 2026
+        <a
+          href="https://esiscom.com"
+          target="_blank"
+          rel="noopener noreferrer"
           >ESISCOM</a
         >
-        2025
-      </p>
+      </span>
     </footer>
 
     <script>
-      function calcular() {
-        const p1 = parseFloat(document.getElementById("parcial1").value) || 0;
-        const p2 = parseFloat(document.getElementById("parcial2").value) || 0;
-        const p3 = parseFloat(document.getElementById("parcial3").value) || 0;
+      const PESOS = [0.3, 0.3, 0.4];
+      let escalaMax = 10;
+      let metaAprobatoria = 7;
 
-        const final = p1 * 0.3 + p2 * 0.3 + p3 * 0.4;
-        document.getElementById(
-          "resultado"
-        ).innerText = `Calificación final: ${final.toFixed(2)}`;
+      const btnEscala10 = document.getElementById("btnEscala10");
+      const btnEscala100 = document.getElementById("btnEscala100");
+      const boton = document.getElementById("botonCalcular");
+      const areaResultado = document.getElementById("area-resultado");
+      const resultadoEtiqueta = document.getElementById("resultadoEtiqueta");
+      const textoResultado = document.getElementById("textoResultado");
+      const resultadoMensaje = document.getElementById("resultadoMensaje");
+      const desglosePonderado = document.getElementById("desglosePonderado");
+      const sufijos = document.querySelectorAll("[data-sufijo]");
+
+      const campos = ["parcial1", "parcial2", "parcial3"].map(function (id) {
+        const input = document.getElementById(id);
+        return {
+          input: input,
+          error: document.getElementById("error-" + id),
+          contenedor: input.closest(".campo"),
+        };
+      });
+
+      function leerNota(campo) {
+        const valor = campo.input.value.trim().replace(",", ".");
+        if (valor === "") {
+          return { error: "Ingresa tu calificación." };
+        }
+        const numero = Number(valor);
+        if (!Number.isFinite(numero)) {
+          return { error: "Ingresa un número válido." };
+        }
+        if (numero < 0 || numero > escalaMax) {
+          return { error: "La nota debe estar entre 0 y " + escalaMax + "." };
+        }
+        return { valor: numero };
       }
+
+      function marcarError(campo, mensaje) {
+        campo.contenedor.classList.add("invalido");
+        campo.input.setAttribute("aria-invalid", "true");
+        campo.error.textContent = mensaje;
+        campo.error.hidden = false;
+      }
+
+      function limpiarError(campo) {
+        campo.contenedor.classList.remove("invalido");
+        campo.input.removeAttribute("aria-invalid");
+        campo.error.textContent = "";
+        campo.error.hidden = true;
+      }
+
+      function cambiarEscala(nuevaMax) {
+        if (nuevaMax === escalaMax) {
+          return;
+        }
+        const factor = nuevaMax / escalaMax;
+        escalaMax = nuevaMax;
+        metaAprobatoria = nuevaMax === 100 ? 70 : 7;
+
+        btnEscala10.setAttribute("aria-pressed", String(nuevaMax === 10));
+        btnEscala100.setAttribute("aria-pressed", String(nuevaMax === 100));
+
+        sufijos.forEach(function (el) {
+          el.textContent = "/" + nuevaMax;
+        });
+
+        campos.forEach(function (campo) {
+          campo.input.max = String(nuevaMax);
+          campo.input.step = nuevaMax === 100 ? "1" : "0.1";
+          campo.input.placeholder = nuevaMax === 100 ? "0" : "0.0";
+          limpiarError(campo);
+
+          const raw = campo.input.value.trim().replace(",", ".");
+          if (raw !== "") {
+            const val = Number(raw);
+            if (Number.isFinite(val)) {
+              const convertido = val * factor;
+              campo.input.value =
+                nuevaMax === 100
+                  ? Math.round(convertido * 10) / 10
+                  : Math.round(convertido * 100) / 100;
+            }
+          }
+        });
+
+        if (!areaResultado.hidden) {
+          calcular();
+        }
+      }
+
+      function calcular() {
+        let primerError = null;
+        const valores = campos.map(function (campo) {
+          const resultado = leerNota(campo);
+          if (resultado.error) {
+            marcarError(campo, resultado.error);
+            if (!primerError) {
+              primerError = campo;
+            }
+            return null;
+          }
+          limpiarError(campo);
+          return resultado.valor;
+        });
+
+        if (primerError) {
+          areaResultado.hidden = true;
+          primerError.input.focus();
+          return;
+        }
+
+        const aportes = valores.map(function (val, idx) {
+          return val * PESOS[idx];
+        });
+        const final = aportes[0] + aportes[1] + aportes[2];
+        const aprobado = final >= metaAprobatoria;
+
+        areaResultado.classList.remove("resultado-bien", "resultado-mal");
+        areaResultado.classList.add(aprobado ? "resultado-bien" : "resultado-mal");
+
+        resultadoEtiqueta.textContent = aprobado ? "Aprobado" : "No aprobado";
+        textoResultado.textContent =
+          final.toFixed(2) + " / " + escalaMax;
+        resultadoMensaje.textContent = aprobado
+          ? "Alcanzas el mínimo aprobatorio de " +
+            metaAprobatoria +
+            (escalaMax === 10 ? ".0" : "") +
+            "."
+          : "Te faltaron " +
+            (metaAprobatoria - final).toFixed(2) +
+            " puntos para llegar a " +
+            metaAprobatoria +
+            (escalaMax === 10 ? ".0" : "") +
+            ".";
+
+        desglosePonderado.innerHTML =
+          "<span>P1 (30%)<strong>" +
+          aportes[0].toFixed(2) +
+          "</strong></span>" +
+          "<span>P2 (30%)<strong>" +
+          aportes[1].toFixed(2) +
+          "</strong></span>" +
+          "<span>P3 (40%)<strong>" +
+          aportes[2].toFixed(2) +
+          "</strong></span>";
+
+        areaResultado.hidden = false;
+
+        const sinMovimiento = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
+        areaResultado.scrollIntoView({
+          behavior: sinMovimiento ? "auto" : "smooth",
+          block: "nearest",
+        });
+        if (document.activeElement) {
+          document.activeElement.blur();
+        }
+      }
+
+      btnEscala10.addEventListener("click", function () {
+        cambiarEscala(10);
+      });
+      btnEscala100.addEventListener("click", function () {
+        cambiarEscala(100);
+      });
+      boton.addEventListener("click", calcular);
+
+      campos.forEach(function (campo) {
+        campo.input.addEventListener("input", function () {
+          limpiarError(campo);
+          areaResultado.hidden = true;
+        });
+        campo.input.addEventListener("keydown", function (evento) {
+          if (evento.key === "Enter") {
+            calcular();
+          }
+        });
+      });
     </script>
   </body>
 </html>
